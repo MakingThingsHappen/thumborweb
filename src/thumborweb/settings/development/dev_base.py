@@ -10,3 +10,7 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+
+# Test dir
+TEST_PATH = os.path.join(PROJ_DIR, 'image_server', 'tests')

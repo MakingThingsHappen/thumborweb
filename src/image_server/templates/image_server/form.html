@@ -1,0 +1,14 @@
+<form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>
+
+
+{% if files %}
+    {% for filename in files %}
+        <p>{{ filename }}</p>
+    {% endfor %}
+{% endif %}
+{% if error %}
+    {{ error }}
+{% endif %}
