@@ -45,3 +45,4 @@ docs/_build
 
 # PyCharm Config
 .idea
+*migrations

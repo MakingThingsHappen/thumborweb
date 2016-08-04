@@ -2,6 +2,8 @@
 from __future__ import absolute_import
 from .base import *
 
+DEBUG = False
+ALLOWED_HOSTS = []
 CLOUDFLARE_EMAIL = 'chenzhigao@mingdabeta.com'
 CLOUDFLARE_API_KEY = '5429536daa4802c477d8affe1b6ff0a8d7e1a'
 CLOUDFLARE_ZONE = 'avarsha.com'

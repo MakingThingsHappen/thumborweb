@@ -1,5 +1,5 @@
 ===============================
-project_name
+thumbor-web
 ===============================
 
 .. image:: https://img.shields.io/travis/zwidny/project_directory.svg
@@ -29,5 +29,5 @@ Features
 Attention
 --------
 
-* This is first edition, and without test. 
+* This is first edition, and without test.
 
