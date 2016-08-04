@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 import os
-from django.http import HttpResponse
+import json
+from django.http import HttpResponse, Http404
 from django.template import loader
 from django.conf import settings
-from django.shortcuts import render, redirect
-from django.core.urlresolvers import reverse_lazy
+from django.shortcuts import render
+from .utils import remove, generate_thumbor_cached_link
 from .forms import FileNameForm
+from .cloudflare import CloudFlare
+
+cf = CloudFlare(settings.CLOUDFLARE_EMAIL,
+                settings.CLOUDFLARE_API_KEY)
 
 
 def list_cwd_file(request):
@@ -24,22 +29,39 @@ def remove_specify_file(request):
 
     """
     form = FileNameForm()
-    files = os.listdir(settings.TEST_PATH)
+    files = os.listdir(settings.FILE_STORAGE_PATH)
     error = None
     if request.method == 'POST':
         form = FileNameForm(data=request.POST)
         if form.is_valid():
-            filename = form.cleaned_data['filename']
-            path = os.path.join(settings.TEST_PATH, filename)
-            has_file = os.path.exists(path)
-            if has_file:
-                os.remove(path)
-                return redirect(reverse_lazy('images:removed', kwargs={'filename': filename}))
+            image_url = form.cleaned_data['filename']
+            # Removing thumbor file cached.
+            try:
+                remove(image_url)
+            except OSError as e:
+                raise Http404(str(e))
+            msg = 'file:{} in thumbor removed successful.'.format(image_url)
+            # Removing cloudflare file cached.
+            cached_link = generate_thumbor_cached_link(
+                            image_url, width=0, height=100, Smart=True)
+            cached_link2 = generate_thumbor_cached_link(
+                            image_url, width=0, height=140, Smart=True)
+            resp = cf.purge_individual_files(settings.CLOUDFLARE_ZONE,
+                                             [cached_link, cached_link2])
+            content = json.loads(resp.content)
+            is_success = content['success']
+            if is_success:
+                msg += '\nAnd cloudflare removed successful.'
             else:
-                error = 'The file:"{}" is not found'.format(filename)
+                msg += '\nBut cloudflare remove failed.'
+
+            return render(request,
+                          'image_server/deleted.html',
+                          {'removed_detail': msg})
+
+            # return redirect(reverse_lazy('images:removed', kwargs={'filename': image_url}))
     template = loader.get_template(
-        'image_server/form.html'
-    )
+        'image_server/form.html')
 
     return HttpResponse(template.render({'form': form,
                                          'files': files,
