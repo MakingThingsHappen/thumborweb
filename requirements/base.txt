@@ -1,2 +1,4 @@
 Django==1.8.14
 uWSGI==2.0.13.1
+requests==2.10.0
+
