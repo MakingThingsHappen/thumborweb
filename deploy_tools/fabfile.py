@@ -72,5 +72,5 @@ def _update_database(source_folder):
 def _update_nginx_conf(site_folder):
     nginx_conf_path = os.path.join(site_folder, 'nginx.conf')
     sed(nginx_conf_path,
-        'alias /path/to',
-        'alias {}'.format(site_folder))
+        ' /path/to',
+        ' {}'.format(site_folder))
