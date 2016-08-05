@@ -18,6 +18,7 @@ def deploy():
     _update_virtualenv(site_folder)
     _update_static_files(source_folder)
     _update_database(source_folder)
+    _update_nginx_conf(site_folder)
 
 
 def _get_latest_source(site_folder):
@@ -30,7 +31,7 @@ def _get_latest_source(site_folder):
 
 
 def _create_directory_structure_if_necessary(site_folder):
-    for subfolder in ('static', 'virtualenv'):
+    for subfolder in ('static', 'virtualenv', 'media'):
         run('mkdir -p {}'.format(os.path.join(site_folder, subfolder)))
 
 
@@ -66,3 +67,10 @@ def _update_database(source_folder):
         '--noinput --noinput --settings=thumborweb.settings.production'.format(source_folder))
     run('cd {} && ../virtualenv/bin/python manage.py migrate '
         '--noinput --noinput --settings=thumborweb.settings.production'.format(source_folder))
+
+
+def _update_nginx_conf(site_folder):
+    nginx_conf_path = os.path.join(site_folder, 'nginx.conf')
+    sed(nginx_conf_path,
+        'alias /path/to',
+        'alias {}'.format(site_folder))
