@@ -45,4 +45,9 @@ docs/_build
 
 # PyCharm Config
 .idea
+
+# Django
 *migrations
+static
+
+

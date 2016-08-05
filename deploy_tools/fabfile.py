@@ -58,7 +58,8 @@ def _update_virtualenv(site_folder):
 
 
 def _update_static_files(source_folder):
-    run('cd %s && ../virtualenv/bin/python manage.py collectstatic --noinput' % (  #
+    run('cd %s && ../virtualenv/bin/python manage.py '
+        'collectstatic --noinput --settings=thumborweb.settings.production' % (  #
         source_folder,
     ))
 
